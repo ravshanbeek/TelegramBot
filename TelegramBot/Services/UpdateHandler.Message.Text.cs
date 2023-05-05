@@ -2,7 +2,6 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TelegramBot.Services;
 
@@ -35,17 +34,20 @@ public partial class UpdateHandler
         }
     }
 
-    private Task HandleOrderAsync(Message message)
+    private async Task HandleOrderAsync(Message message)
     {
         var user = message.From;
         var requestOrder = new ReplyKeyboardMarkup(new[] {
             new[] { new KeyboardButton("Logotip yasash"),
-                    new KeyboardButton("ru")}
+                    new KeyboardButton("Foto vs Video rolik")}
         });
 
         requestOrder.ResizeKeyboard = true;
         requestOrder.OneTimeKeyboard = true;
-        throw new NotImplementedException();
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: "Xizmatlar",
+            replyMarkup: requestOrder);
     }
 
     private async Task HandleContactWithAdminAsync(Message message)
@@ -71,9 +73,9 @@ public partial class UpdateHandler
     {
         var user = message.From;
         Read();
-        if(!users.ContainsKey(user.Id))
+        if (!users.ContainsKey(user.Id))
         {
-            users.Add(user.Id, new User(user.Id,user.Username,user.FirstName,user.LastName));
+            users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
         }
         int lan = message.Text.Contains("uz") ? 1 : 2;
         users[user.Id].Language = lan;
@@ -88,7 +90,7 @@ public partial class UpdateHandler
         requestContact.OneTimeKeyboard = true;
 
         await client.SendTextMessageAsync(
-            chatId:  user.Id,
+            chatId: user.Id,
             text: lan == 1 ? "Iltimos raqamingizni biz bilan ulashing" :
                 "Пожалуйста, поделитесь с нами своим номером",
             replyMarkup: requestContact);
@@ -102,7 +104,7 @@ public partial class UpdateHandler
         {
             users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
             Write();
-            
+
             return;
         }
 
@@ -119,12 +121,12 @@ public partial class UpdateHandler
                 text: "Tilni tanlang\nВыберите язык",
                 replyMarkup: requestLanguage);
     }
-    
+
     private string MapLink(double latitude, double longitude)
     {
         string link = $"https://maps.google.com/maps?q={longitude},{latitude}&ll={longitude},{latitude}&z=16";
 
         return link;
     }
-    
+
 }

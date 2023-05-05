@@ -18,7 +18,6 @@ namespace TelegramBot
                 .AddNewtonsoftJson();
 
             builder.Services
-            .AddDbContexts(builder.Configuration)
             .AddUpdateHandler()
             .AddTelegramBotClient(builder.Configuration);
 

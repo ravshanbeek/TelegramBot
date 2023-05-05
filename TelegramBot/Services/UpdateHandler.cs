@@ -1,22 +1,18 @@
-﻿using Newtonsoft.Json;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelegramBot.Contexts;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TelegramBot.Services;
 
 public partial class UpdateHandler
 {
-    private readonly AppDbContext context;
     private readonly ITelegramBotClient client;
     private Dictionary<long,User> users = new Dictionary<long, User>();
     private readonly string db = "C:\\Users\\Ravshan\\Desktop\\Projects\\TelegramBot\\TelegramBot\\Models\\basa.txt";
 
-    public UpdateHandler(AppDbContext context, ITelegramBotClient client)
+    public UpdateHandler(ITelegramBotClient client)
     {
-        this.context = context;
         this.client = client;
     }
 
