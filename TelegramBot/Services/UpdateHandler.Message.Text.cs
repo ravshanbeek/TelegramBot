@@ -19,8 +19,22 @@ public partial class UpdateHandler
                 "uz" => HandleLanguageCommandAsync(message),
                 "ru" => HandleLanguageCommandAsync(message),
                 "SMM" => HandleCMMCommandAsync(message),
+                "CopyWriting" => HandleCMMCommandAsync(message),
+                "Design" => HandleCMMCommandAsync(message),
+                "Resume" => HandleCMMCommandAsync(message),
+                "Portfolio" => HandleCMMCommandAsync(message),
+
+                "СММ" => HandleCMMCommandAsync(message),
+                "Копирайтинг" => HandleCMMCommandAsync(message),
+                "Дизайн" => HandleCMMCommandAsync(message),
+                "Резюме" => HandleCMMCommandAsync(message),
+                "портфолио" => HandleCMMCommandAsync(message),
+
                 "Admin bilan aloqa" => HandleContactWithAdminAsync(message),
                 "Zakaz berish" => HandleOrderAsync(message),
+
+                "Связаться с администратором" => HandleContactWithAdminAsync(message),
+                "Разместить заказ" => HandleOrderAsync(message),
                 _ => HandleNotAvailableCommandAsync(message)
             };
 
@@ -95,8 +109,8 @@ public partial class UpdateHandler
                 "Пожалуйста, поделитесь с нами своим номером",
             replyMarkup: requestContact);
     }
-
-    private async Task HandleStartCommandAsync(Message message)
+    private async Task HandleStartCommandAsync
+        (Message message)
     {
         Read();
         var user = message.From;

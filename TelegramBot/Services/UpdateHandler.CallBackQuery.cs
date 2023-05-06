@@ -46,7 +46,7 @@ public partial class UpdateHandler
         });
 
         buttons.ResizeKeyboard = true;
-        buttons.OneTimeKeyboard = true;
+        buttons.OneTimeKeyboard = false;
 
         return buttons;
     }
@@ -55,7 +55,7 @@ public partial class UpdateHandler
     {
         var buttons = new ReplyKeyboardMarkup(new[] {
             new[]{ 
-                new KeyboardButton("CMM"),
+                new KeyboardButton("СММ"),
                 new KeyboardButton("Kопирайтинг"),
                 new KeyboardButton("Дизайн")
             },
@@ -70,7 +70,7 @@ public partial class UpdateHandler
         });
 
         buttons.ResizeKeyboard = true;
-        buttons.OneTimeKeyboard = true;
+        buttons.OneTimeKeyboard = false;
 
         return buttons;
     }

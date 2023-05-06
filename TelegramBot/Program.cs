@@ -1,5 +1,3 @@
-
-using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using TelegramBot.Middlewares;
 using TelegramBot.Services;
