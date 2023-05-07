@@ -18,21 +18,19 @@ public partial class UpdateHandler
                 "/start" => HandleStartCommandAsync(message),
                 "uz" => HandleLanguageCommandAsync(message),
                 "ru" => HandleLanguageCommandAsync(message),
-                "SMM" => HandleCMMCommandAsync(message),
-                "CopyWriting" => HandleCMMCommandAsync(message),
-                "Design" => HandleCMMCommandAsync(message),
-                "Resume" => HandleCMMCommandAsync(message),
-                "Portfolio" => HandleCMMCommandAsync(message),
-
-                "СММ" => HandleCMMCommandAsync(message),
-                "Копирайтинг" => HandleCMMCommandAsync(message),
-                "Дизайн" => HandleCMMCommandAsync(message),
-                "Резюме" => HandleCMMCommandAsync(message),
-                "портфолио" => HandleCMMCommandAsync(message),
-
+                "Mobilografiya" => MobileGrafic(message),
+                "Grafik dizayn" => GraphicDisign(message),
+                "Video Montaj" => MontageVideo(message),
+                "Kopywriting" => CopyWriting(message),
                 "Admin bilan aloqa" => HandleContactWithAdminAsync(message),
                 "Zakaz berish" => HandleOrderAsync(message),
 
+
+                "Прайс лист" => CategoryOfPrice(message),
+                "Мобилография" => MobileGrafic(message),
+                "Графический дизайнер" => GraphicDisign(message),
+                "Видео монтаж" => MontageVideo(message),
+                "Копирайтинг" => CopyWriting(message),
                 "Связаться с администратором" => HandleContactWithAdminAsync(message),
                 "Разместить заказ" => HandleOrderAsync(message),
                 _ => HandleNotAvailableCommandAsync(message)
@@ -48,20 +46,79 @@ public partial class UpdateHandler
         }
     }
 
+    private Task CopyWriting(Message message)
+    {
+        var user = message.From;
+        var file = new InputOnlineFile("BAACAgIAAxkBAAIDbWRXRTqbScNMqN69IN-E3YargnjVAAIiKwACnbsISnnquB8zs6x_LwQ");
+
+        client.SendDocumentAsync(user.Id, file);
+
+        return Task.CompletedTask;
+    }
+
+    private Task MontageVideo(Message message)
+    {
+        var user = message.From;
+        var file = new InputOnlineFile("BAACAgIAAxkBAAIDbWRXRTqbScNMqN69IN-E3YargnjVAAIiKwACnbsISnnquB8zs6x_LwQ");
+
+        client.SendVideoAsync(user.Id, file);
+
+        return Task.CompletedTask;
+    }
+
+    private Task GraphicDisign(Message message)
+    {
+        var user = message.From;
+        var file = new InputOnlineFile("AgACAgIAAxkBAAIDY2RXRCrmIB08ZGckzxRcYoivHuj9AALJxjEbnbsIStIr_e9NqfnaAQADAgADeQADLwQ");
+
+        client.SendPhotoAsync(user.Id, file);
+
+        return Task.CompletedTask;
+    }
+
+    private Task MobileGrafic(Message message)
+    {
+        var user = message.From;
+        var file = new InputOnlineFile("BAACAgIAAxkBAAIDXWRXQtUM2TUrw_PVzr00kWOdLSm1AAIKKwACnbsISrXmoIgXiHhULwQ");
+
+        client.SendVideoAsync(user.Id, file);
+
+        return Task.CompletedTask;
+    }
+
     private async Task HandleOrderAsync(Message message)
     {
         var user = message.From;
-        var requestOrder = new ReplyKeyboardMarkup(new[] {
-            new[] { new KeyboardButton("Logotip yasash"),
-                    new KeyboardButton("Foto vs Video rolik")}
+        var requestOrderuz = new ReplyKeyboardMarkup(new[] {
+            new[]
+            { 
+                new KeyboardButton("SMM"),
+                new KeyboardButton("Grafik Dizayn"),
+                new KeyboardButton("MobilGrafiya")},
+            new[]
+            {
+                new KeyboardButton("Orqaga")
+            }
         });
 
-        requestOrder.ResizeKeyboard = true;
-        requestOrder.OneTimeKeyboard = true;
+        var requestOrderru = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("СММ"),
+                new KeyboardButton("МобилоГрафия"),
+                new KeyboardButton("Графический Дизайнер")},
+            new[]
+            {
+                new KeyboardButton("Назад")
+            }
+        });
+
+        requestOrderuz.ResizeKeyboard = true;
+        requestOrderuz.OneTimeKeyboard = true;
         await client.SendTextMessageAsync(
             chatId: user.Id,
             text: "Xizmatlar",
-            replyMarkup: requestOrder);
+            replyMarkup: requestOrderuz);
     }
 
     private async Task HandleContactWithAdminAsync(Message message)
@@ -73,10 +130,10 @@ public partial class UpdateHandler
             text: $"@{users[user.Id].UserName}");
     }
 
-    private Task HandleCMMCommandAsync(Message message)
+    private Task CategoryOfPrice(Message message)
     {
         var user = message.From;
-        var doc = new InputOnlineFile("BQACAgIAAxkBAAIBumRTsxpGzCCWhwmUruPb5L7xxjmgAAJQLQACX0OhSgl36cBOeFFaLwQ");
+        var doc = new InputOnlineFile("BQACAgIAAxkBAAIDQWRXQLaRuiPVcWHuxV7s-RUNx4C7AAL7JAACnPDAShfMlesofOtTLwQ");
 
         client.SendDocumentAsync(user.Id, doc);
 

@@ -29,19 +29,27 @@ public partial class UpdateHandler
         var buttons = new ReplyKeyboardMarkup(new[] {
             new[]
             {
-                new KeyboardButton("SMM"),
-                new KeyboardButton("CopyWriting"),
-                new KeyboardButton("Design")
+                new KeyboardButton("Zakaz berish"),
+                new KeyboardButton("Admin bilan aloqa")
+            },
+
+            new[]
+            {
+                new KeyboardButton("Прайс лист")
             },
             new[]
             {
-                new KeyboardButton("Resume"),
-                new KeyboardButton("Portfolio")
+                new KeyboardButton("Mobilografiya"),
+                new KeyboardButton("Grafik dizayn")
             },
             new[]
             {
-                new KeyboardButton("Admin bilan aloqa"),
-                new KeyboardButton("Zakaz berish")
+                new KeyboardButton("Video Montaj"),
+            },
+
+            new[]
+            {
+                new KeyboardButton("Kopywriting"),
             }
         });
 
@@ -54,18 +62,22 @@ public partial class UpdateHandler
     private ReplyKeyboardMarkup GenerateMainMenuRu()
     {
         var buttons = new ReplyKeyboardMarkup(new[] {
-            new[]{ 
-                new KeyboardButton("СММ"),
-                new KeyboardButton("Kопирайтинг"),
-                new KeyboardButton("Дизайн")
+            new[]{
+                new KeyboardButton("Заказать"),
+                new KeyboardButton("Для связи с нами")
             },
             new[]{
-                new KeyboardButton("Резюме"),
-                new KeyboardButton("портфолио")
+                new KeyboardButton("Прайс лист")
             },
             new[]{
-                new KeyboardButton("Связаться с администратором"),
-                new KeyboardButton("Разместить заказ")
+                new KeyboardButton("Мобилография"),
+                new KeyboardButton("Графический дизайнер")
+            },
+            new[]{
+                new KeyboardButton("Видео монтаж")
+            },
+            new[]{
+                new KeyboardButton("Копирайтинг")
             }
         });
 
