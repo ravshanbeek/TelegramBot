@@ -54,7 +54,6 @@ public partial class UpdateHandler
         });
 
         buttons.ResizeKeyboard = true;
-        buttons.OneTimeKeyboard = false;
 
         return buttons;
     }
@@ -82,7 +81,6 @@ public partial class UpdateHandler
         });
 
         buttons.ResizeKeyboard = true;
-        buttons.OneTimeKeyboard = false;
 
         return buttons;
     }

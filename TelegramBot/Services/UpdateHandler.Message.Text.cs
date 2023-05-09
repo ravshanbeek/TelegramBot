@@ -24,6 +24,11 @@ public partial class UpdateHandler
                 "Kopywriting" => CopyWriting(message),
                 "Admin bilan aloqa" => HandleContactWithAdminAsync(message),
                 "Zakaz berish" => HandleOrderAsync(message),
+                "SMM" => HandleSMMAsync(message),
+                "Grafik Dizayn" => HandleGraficDisign(message),
+                "MobilGrafiya" => HandleMobileGrafic(message),
+                "Asosiy Menyu" => BackToMain(message),
+                "Orqaga" => BackToMain(message),
 
 
                 "Прайс лист" => CategoryOfPrice(message),
@@ -31,8 +36,14 @@ public partial class UpdateHandler
                 "Графический дизайнер" => GraphicDisign(message),
                 "Видео монтаж" => MontageVideo(message),
                 "Копирайтинг" => CopyWriting(message),
-                "Связаться с администратором" => HandleContactWithAdminAsync(message),
-                "Разместить заказ" => HandleOrderAsync(message),
+                "Для связи с нами" => HandleContactWithAdminAsync(message),
+                "Заказать" => HandleOrderAsync(message),
+                "СММ" => HandleSMMAsync(message),
+                "МобилоГрафия" => HandleMobileGrafic(message),
+                "Графический Дизайнер" => HandleGraficDisign(message),
+                "Главное меню" => BackToMain(message),
+                "Назад" => BackToMain(message),
+
                 _ => HandleNotAvailableCommandAsync(message)
             };
 
@@ -44,6 +55,63 @@ public partial class UpdateHandler
                 chatId: message.From.Id,
                 text: "Failed to handle your request. Please try again");
         }
+    }
+
+    private async Task BackToMain(Message message)
+    {
+        Read();
+        var user = users[message.From.Id];
+
+        client.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: user.Language == 1 ? "Menyu" : "Меню",
+            replyMarkup: user.Language == 1 ? GenerateMainMenuUz() : GenerateMainMenuRu());
+    }
+
+    private Task HandleMobileGrafic(Message message)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task HandleGraficDisign(Message message)
+    {
+        Read();
+        var user = users[message.Chat.Id];
+
+        var requestGraficDisignuz = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("Logo"),
+                new KeyboardButton("Dizayn")},
+            new[]
+            {
+                new KeyboardButton("Asosiy Menyu")
+            }
+        });
+        requestGraficDisignuz.ResizeKeyboard = true;
+
+        var requestGraficDisignru = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("Логотип"),
+                new KeyboardButton("Дизайн")},
+            new[]
+            {
+                new KeyboardButton("Главное меню")
+            }
+        });
+        requestGraficDisignru.ResizeKeyboard = true;
+
+        await this.client.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: user.Language == 1 ? "Xizmatlarimiz" : "Наши сервисы",
+            replyMarkup: user.Language == 1 ? requestGraficDisignuz : requestGraficDisignru);
+            
+    }
+
+    private Task HandleSMMAsync(Message message)
+    {
+        throw new NotImplementedException();
     }
 
     private Task CopyWriting(Message message)
@@ -88,7 +156,9 @@ public partial class UpdateHandler
 
     private async Task HandleOrderAsync(Message message)
     {
-        var user = message.From;
+        Read();
+        var user = users[message.From.Id];
+
         var requestOrderuz = new ReplyKeyboardMarkup(new[] {
             new[]
             { 
@@ -100,25 +170,25 @@ public partial class UpdateHandler
                 new KeyboardButton("Orqaga")
             }
         });
+        requestOrderuz.ResizeKeyboard = true;
 
         var requestOrderru = new ReplyKeyboardMarkup(new[] {
             new[]
             {
                 new KeyboardButton("СММ"),
-                new KeyboardButton("МобилоГрафия"),
-                new KeyboardButton("Графический Дизайнер")},
+                new KeyboardButton("Графический Дизайнер"),
+                new KeyboardButton("МобилоГрафия")},
             new[]
             {
                 new KeyboardButton("Назад")
             }
         });
+        requestOrderru.ResizeKeyboard = true;
 
-        requestOrderuz.ResizeKeyboard = true;
-        requestOrderuz.OneTimeKeyboard = true;
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: "Xizmatlar",
-            replyMarkup: requestOrderuz);
+            text: user.Language == 1 ? "Xizmatlar": "Услуги",
+            replyMarkup: user.Language == 1 ? requestOrderuz : requestOrderru);
     }
 
     private async Task HandleContactWithAdminAsync(Message message)
