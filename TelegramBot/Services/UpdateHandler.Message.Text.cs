@@ -29,7 +29,7 @@ public partial class UpdateHandler
                 "MobilGrafiya" => HandleMobileGrafic(message),
                 "Asosiy Menyu" => BackToMain(message),
                 "Orqaga" => BackToMain(message),
-
+                "Admin" => AdminMenuAsync(message),
 
                 "Прайс лист" => CategoryOfPrice(message),
                 "Мобилография" => MobileGrafic(message),
@@ -55,6 +55,42 @@ public partial class UpdateHandler
                 chatId: message.From.Id,
                 text: "Failed to handle your request. Please try again");
         }
+    }
+
+    private Task AdminMenuAsync(Message message)
+    {
+        Read();
+        ReadResource();
+        resource.Admin = users[5130690942];
+
+        if (message.From.Id != resource.Admin.Id)
+            return Task.CompletedTask;
+
+        var inlineKeyboard = new InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Admin bilan aloqa", "Admin"),
+                InlineKeyboardButton.WithCallbackData("Прайс лист", "Category")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Mobilografiya", "MobileGrafic"),
+                InlineKeyboardButton.WithCallbackData("Grafik dizayn", "GraficDisign")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Video Montaj", "VideoMontage"),
+                InlineKeyboardButton.WithCallbackData("Kopywriting", "Kopywriting")
+            }
+        });
+
+        client.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: "Nimani o'zgartirmoqchisiz",
+            replyMarkup: inlineKeyboard);
+
+        return Task.CompletedTask;
     }
 
     private async Task BackToMain(Message message)
@@ -106,7 +142,7 @@ public partial class UpdateHandler
             chatId: message.Chat.Id,
             text: user.Language == 1 ? "Xizmatlarimiz" : "Наши сервисы",
             replyMarkup: user.Language == 1 ? requestGraficDisignuz : requestGraficDisignru);
-            
+
     }
 
     private Task HandleSMMAsync(Message message)
@@ -114,20 +150,21 @@ public partial class UpdateHandler
         throw new NotImplementedException();
     }
 
-    private Task CopyWriting(Message message)
+    private async Task CopyWriting(Message message)
     {
         var user = message.From;
-        var file = new InputOnlineFile("BAACAgIAAxkBAAIDbWRXRTqbScNMqN69IN-E3YargnjVAAIiKwACnbsISnnquB8zs6x_LwQ");
+        ReadResource();
 
-        client.SendDocumentAsync(user.Id, file);
-
-        return Task.CompletedTask;
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: resource.CopyWriting);
     }
 
     private Task MontageVideo(Message message)
     {
         var user = message.From;
-        var file = new InputOnlineFile("BAACAgIAAxkBAAIDbWRXRTqbScNMqN69IN-E3YargnjVAAIiKwACnbsISnnquB8zs6x_LwQ");
+        ReadResource();
+        var file = new InputOnlineFile(resource.VideoMontage);
 
         client.SendVideoAsync(user.Id, file);
 
@@ -137,7 +174,8 @@ public partial class UpdateHandler
     private Task GraphicDisign(Message message)
     {
         var user = message.From;
-        var file = new InputOnlineFile("AgACAgIAAxkBAAIDY2RXRCrmIB08ZGckzxRcYoivHuj9AALJxjEbnbsIStIr_e9NqfnaAQADAgADeQADLwQ");
+        ReadResource();
+        var file = new InputOnlineFile(resource.GraficDisign);
 
         client.SendPhotoAsync(user.Id, file);
 
@@ -147,7 +185,8 @@ public partial class UpdateHandler
     private Task MobileGrafic(Message message)
     {
         var user = message.From;
-        var file = new InputOnlineFile("BAACAgIAAxkBAAIDXWRXQtUM2TUrw_PVzr00kWOdLSm1AAIKKwACnbsISrXmoIgXiHhULwQ");
+        ReadResource();
+        var file = new InputOnlineFile(resource.MobileGrafic);
 
         client.SendVideoAsync(user.Id, file);
 
@@ -161,7 +200,7 @@ public partial class UpdateHandler
 
         var requestOrderuz = new ReplyKeyboardMarkup(new[] {
             new[]
-            { 
+            {
                 new KeyboardButton("SMM"),
                 new KeyboardButton("Grafik Dizayn"),
                 new KeyboardButton("MobilGrafiya")},
@@ -187,23 +226,24 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: user.Language == 1 ? "Xizmatlar": "Услуги",
+            text: user.Language == 1 ? "Xizmatlar" : "Услуги",
             replyMarkup: user.Language == 1 ? requestOrderuz : requestOrderru);
     }
 
     private async Task HandleContactWithAdminAsync(Message message)
     {
         var user = message.From;
-        Read();
+        ReadResource();
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: $"@{users[user.Id].UserName}");
+            text: resource.ContactWithAdmin);
     }
 
     private Task CategoryOfPrice(Message message)
     {
         var user = message.From;
-        var doc = new InputOnlineFile("BQACAgIAAxkBAAIDQWRXQLaRuiPVcWHuxV7s-RUNx4C7AAL7JAACnPDAShfMlesofOtTLwQ");
+        ReadResource();
+        var doc = new InputOnlineFile(resource.Category);
 
         client.SendDocumentAsync(user.Id, doc);
 
@@ -263,11 +303,71 @@ public partial class UpdateHandler
                 replyMarkup: requestLanguage);
     }
 
+    private ReplyKeyboardMarkup GenerateMainMenuUz()
+    {
+        var buttons = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("Zakaz berish"),
+                new KeyboardButton("Admin bilan aloqa")
+            },
+
+            new[]
+            {
+                new KeyboardButton("Прайс лист")
+            },
+            new[]
+            {
+                new KeyboardButton("Mobilografiya"),
+                new KeyboardButton("Grafik dizayn")
+            },
+            new[]
+            {
+                new KeyboardButton("Video Montaj"),
+            },
+
+            new[]
+            {
+                new KeyboardButton("Kopywriting"),
+            }
+        });
+
+        buttons.ResizeKeyboard = true;
+
+        return buttons;
+    }
+
+    private ReplyKeyboardMarkup GenerateMainMenuRu()
+    {
+        var buttons = new ReplyKeyboardMarkup(new[] {
+            new[]{
+                new KeyboardButton("Заказать"),
+                new KeyboardButton("Для связи с нами")
+            },
+            new[]{
+                new KeyboardButton("Прайс лист")
+            },
+            new[]{
+                new KeyboardButton("Мобилография"),
+                new KeyboardButton("Графический дизайнер")
+            },
+            new[]{
+                new KeyboardButton("Видео монтаж")
+            },
+            new[]{
+                new KeyboardButton("Копирайтинг")
+            }
+        });
+
+        buttons.ResizeKeyboard = true;
+
+        return buttons;
+    }
+
     private string MapLink(double latitude, double longitude)
     {
         string link = $"https://maps.google.com/maps?q={longitude},{latitude}&ll={longitude},{latitude}&z=16";
 
         return link;
     }
-
 }
