@@ -12,7 +12,8 @@ public partial class UpdateHandler
             MessageType.Text => HandleMessageTextAsync(message),
             MessageType.Contact => HandleMessageContactAsync(message),
             MessageType.Video => HandleMessageVideoAsync(message),
-
+            MessageType.Document => HandleMessageDocumentAsync(message),
+            MessageType.Photo => HandleMessagePhotoAsync(message),
             _ => HandleNotAvailableCommandAsync(message)
         };
 

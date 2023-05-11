@@ -19,7 +19,7 @@ public partial class UpdateHandler
 
         var user = users[message.Chat.Id];
 
-        client.SendTextMessageAsync(
+        await client.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: user.Language == 1 ? "Menyu" : "Меню",
             replyMarkup: user.Language == 1 ? GenerateMainMenuUz() : GenerateMainMenuRu());

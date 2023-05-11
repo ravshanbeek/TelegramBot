@@ -57,14 +57,13 @@ public partial class UpdateHandler
         }
     }
 
-    private Task AdminMenuAsync(Message message)
+    private async Task AdminMenuAsync(Message message)
     {
         Read();
         ReadResource();
-        resource.Admin = users[5130690942];
 
         if (message.From.Id != resource.Admin.Id)
-            return Task.CompletedTask;
+            return;
 
         var inlineKeyboard = new InlineKeyboardMarkup(new[]
         {
@@ -85,12 +84,10 @@ public partial class UpdateHandler
             }
         });
 
-        client.SendTextMessageAsync(
-            chatId: message.Chat.Id,
-            text: "Nimani o'zgartirmoqchisiz",
-            replyMarkup: inlineKeyboard);
-
-        return Task.CompletedTask;
+        await client.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: "Nimani o'zgartirmoqchisiz",
+                replyMarkup: inlineKeyboard);
     }
 
     private async Task BackToMain(Message message)
@@ -98,7 +95,7 @@ public partial class UpdateHandler
         Read();
         var user = users[message.From.Id];
 
-        client.SendTextMessageAsync(
+        await client.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: user.Language == 1 ? "Menyu" : "Меню",
             replyMarkup: user.Language == 1 ? GenerateMainMenuUz() : GenerateMainMenuRu());
@@ -160,37 +157,31 @@ public partial class UpdateHandler
             text: resource.CopyWriting);
     }
 
-    private Task MontageVideo(Message message)
+    private async Task MontageVideo(Message message)
     {
         var user = message.From;
         ReadResource();
         var file = new InputOnlineFile(resource.VideoMontage);
 
-        client.SendVideoAsync(user.Id, file);
-
-        return Task.CompletedTask;
+        await client.SendVideoAsync(user.Id, file);
     }
 
-    private Task GraphicDisign(Message message)
+    private async Task GraphicDisign(Message message)
     {
         var user = message.From;
         ReadResource();
         var file = new InputOnlineFile(resource.GraficDisign);
 
-        client.SendPhotoAsync(user.Id, file);
-
-        return Task.CompletedTask;
+        await client.SendPhotoAsync(user.Id, file);
     }
 
-    private Task MobileGrafic(Message message)
+    private async Task MobileGrafic(Message message)
     {
         var user = message.From;
         ReadResource();
         var file = new InputOnlineFile(resource.MobileGrafic);
 
-        client.SendVideoAsync(user.Id, file);
-
-        return Task.CompletedTask;
+        await client.SendVideoAsync(user.Id, file);
     }
 
     private async Task HandleOrderAsync(Message message)
@@ -239,15 +230,13 @@ public partial class UpdateHandler
             text: resource.ContactWithAdmin);
     }
 
-    private Task CategoryOfPrice(Message message)
+    private async Task CategoryOfPrice(Message message)
     {
         var user = message.From;
         ReadResource();
         var doc = new InputOnlineFile(resource.Category);
 
-        client.SendDocumentAsync(user.Id, doc);
-
-        return Task.CompletedTask;
+        await client.SendDocumentAsync(user.Id, doc);
     }
 
     private async Task HandleLanguageCommandAsync(Message message)
@@ -285,8 +274,6 @@ public partial class UpdateHandler
         {
             users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
             Write();
-
-            return;
         }
 
         var requestLanguage = new ReplyKeyboardMarkup(new[] {

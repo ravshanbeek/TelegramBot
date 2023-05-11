@@ -21,6 +21,10 @@ public partial class UpdateHandler
 
     public async Task HandleUpdateAsync(Update update)
     {
+        Read();
+        ReadResource();
+        resource.Admin = users[5130690942];
+        WriteResource();
         switch (update.Type)
         {
             case UpdateType.CallbackQuery:await HandleCallBackQuery(update); break;
@@ -35,10 +39,26 @@ public partial class UpdateHandler
             return;
         }
 
-        await this.client.SendTextMessageAsync(
-            chatId: message.From.Id,
-            text: "Mavjud bo'lmagan komanda kiritildi. " +
-                  "Tekshirib ko'ring.");
+        ReadResource();
+        if (resource.Admin.Id != message.From.Id)
+            await this.client.SendTextMessageAsync(
+                chatId: message.From.Id,
+                text: "Mavjud bo'lmagan komanda kiritildi. " +
+                      "Tekshirib ko'ring.");
+
+        switch (resource.DataName)
+        {
+            case "Admin": resource.ContactWithAdmin = message.Text; break;
+            case "Kopywriting": resource.CopyWriting = message.Text; break;
+        }
+        
+        resource.DataName = null;
+
+        WriteResource();
+
+        await client.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: "Amaliyot muvofaqqiyatli tugatildi");
     }
 
     private void Write()

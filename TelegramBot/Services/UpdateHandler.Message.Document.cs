@@ -5,18 +5,16 @@ namespace TelegramBot.Services;
 
 public partial class UpdateHandler
 {
-    private Task HandleMessageVideoAsync(Message message)
+    private Task HandleMessageDocumentAsync(Message message)
     {
         ReadResource();
-
-        if(message.Chat.Id != resource.Admin.Id)
+        if (message.Chat.Id != resource.Admin.Id)
             return Task.CompletedTask;
 
-        switch(resource.DataName)
-        {
-            case "MobileGrafic": resource.MobileGrafic = message.Video.FileId; break;
-            case "VideoMontage": resource.VideoMontage = message.Video.FileId; break;
-        }
+        if (resource.DataName != "Category")
+            return Task.CompletedTask;
+
+        resource.Category = message.Document.FileId;
 
         resource.DataName = null;
 
