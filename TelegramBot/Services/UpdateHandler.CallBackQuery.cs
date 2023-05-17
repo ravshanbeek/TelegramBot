@@ -10,6 +10,8 @@ public partial class UpdateHandler
         {
             _ => GetRequestForChangingData(update)
         };
+
+        await task;
     }
     private async Task GetRequestForChangingData(Update update)
     {
@@ -21,6 +23,5 @@ public partial class UpdateHandler
         await client.SendTextMessageAsync(
             chatId: resource.Admin.Id,
             text: "Ma'lumotni jo'nating");
-
     }
 }

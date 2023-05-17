@@ -5,12 +5,12 @@ namespace TelegramBot.Services;
 
 public partial class UpdateHandler
 {
-    private Task HandleMessageVideoAsync(Message message)
+    private async Task HandleMessageVideoAsync(Message message)
     {
         ReadResource();
 
         if(message.Chat.Id != resource.Admin.Id)
-            return Task.CompletedTask;
+            return;
 
         switch(resource.DataName)
         {
@@ -22,11 +22,8 @@ public partial class UpdateHandler
 
         WriteResource();
 
-        client.SendTextMessageAsync(
+        await client.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: "Amaliyot muvofaqqiyatli tugatildi");
-
-
-        return Task.CompletedTask;
     }
 }

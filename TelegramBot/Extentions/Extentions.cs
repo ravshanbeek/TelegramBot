@@ -10,7 +10,8 @@ namespace TelegramBot.Services
         {
 
             string botApiKey = configuration
-                .GetSection("TelegramBot:ApiKey").Value;
+                .GetSection("TelegramBot:ApiKey").Value ??
+                    throw new NullReferenceException(nameof(configuration));
 
             services.AddSingleton<ITelegramBotClient, TelegramBotClient>(x => new TelegramBotClient(botApiKey));
 

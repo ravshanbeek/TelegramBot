@@ -21,46 +21,85 @@ public partial class UpdateHandler
 
     public async Task HandleUpdateAsync(Update update)
     {
-        Read();
-        ReadResource();
-        resource.Admin = users[5130690942];
-        WriteResource();
         switch (update.Type)
         {
             case UpdateType.CallbackQuery:await HandleCallBackQuery(update); break;
             case UpdateType.Message:await HandleMessage(update.Message); break;
-            
         }
     }
     private async Task HandleNotAvailableCommandAsync(Message message)
     {
-        if (message is null) 
+        if (message is null)
+            return;
+
+        Read();
+        ReadResource();
+        var u = message.From ?? throw new ArgumentNullException(nameof(message));
+
+        /*if (resource.Admin.Id == u.Id)
         {
+            switch (resource.DataName)
+            {
+                case "Admin": resource.ContactWithAdmin = message.Text; break;
+                case "Kopywriting": resource.CopyWriting = message.Text; break;
+            }
+        
+            resource.DataName = null;
+
+            WriteResource();
+
+            await client.SendTextMessageAsync(
+                chatId: u.Id,
+                text: "Amaliyot muvofaqqiyatli tugatildi");
+            return;
+        }*/
+
+        var user = users[u.Id];
+
+        if (users[u.Id].Order?.Status == 1)
+        {
+            var loginPassword = message.Text.Split('*').ToArray();
+
+            users[user.Id].Order.InstagramUrl = loginPassword[0];
+            users[user.Id].Order.InstagramParol = loginPassword[1];
+            users[user.Id].Order.Status = 2;
+
+            Write();
+
+            await client.SendTextMessageAsync(
+                chatId: user.Id,
+                text: users[u.Id].Language == 1 ? "TZ ni yuboring" : "send me TZ");
+
             return;
         }
 
-        ReadResource();
-        if (resource.Admin.Id != message.From.Id)
-            await this.client.SendTextMessageAsync(
-                chatId: message.From.Id,
-                text: "Mavjud bo'lmagan komanda kiritildi. " +
-                      "Tekshirib ko'ring.");
-
-        switch (resource.DataName)
+        if (users[user.Id].Order.Status == 2)
         {
-            case "Admin": resource.ContactWithAdmin = message.Text; break;
-            case "Kopywriting": resource.CopyWriting = message.Text; break;
+            users[user.Id].Order.Text = message.Text;
+
+            var servise = users[user.Id].Order.Service;
+            var sender = servise == "SMM" ? resource.Admin :
+                servise == "CopyWriting" ? resource.CoypWriter :
+                servise == "Disign" || servise == "Logo" ? resource.Disigner :
+                servise == "MobilGrafiya" ? resource.MobiloGrafer : null;
+
+            await client.SendTextMessageAsync(
+                chatId: sender.Id,
+                text: $"sizga {user.LastName} {user.LastName}" + 
+                    $"{user.UserName} {user.PhoneNumber} sizga buyurtma berdi" + 
+                    $"Xizmat: {user.Order.Service}" +
+                    $"Instagram: {user.Order.InstagramUrl}" + 
+                    $"Parol: {user.Order.InstagramParol}" +
+                    $"TZ: {user.Order.Text}");
         }
-        
-        resource.DataName = null;
 
-        WriteResource();
-
-        await client.SendTextMessageAsync(
-            chatId: message.Chat.Id,
-            text: "Amaliyot muvofaqqiyatli tugatildi");
+        await this.client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: "Mavjud bo'lmagan komanda kiritildi. " +
+                  "Tekshirib ko'ring.");
     }
 
+    #region Read and Write users
     private void Write()
     {
         using StreamWriter wr = new StreamWriter(db);
@@ -71,11 +110,13 @@ public partial class UpdateHandler
     {
         using StreamReader sr = new StreamReader(db);
         var text = sr.ReadToEnd();
-            if (!String.IsNullOrEmpty(text))
-            {
-                this.users = JsonSerializer.Deserialize<Dictionary<long, User>>(text);
-            }
+        if (!String.IsNullOrEmpty(text))
+        {
+            this.users = JsonSerializer.Deserialize<Dictionary<long, User>>(text);
+        }
     }
+    #endregion
+    #region Read and Write resourse database
     private void WriteResource()
     {
         using StreamWriter wr = new StreamWriter(resourceDb);
@@ -91,4 +132,6 @@ public partial class UpdateHandler
             this.resource = JsonSerializer.Deserialize<Resource>(text);
         }
     }
+    #endregion
+
 }

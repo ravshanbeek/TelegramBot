@@ -11,10 +11,10 @@ public partial class UpdateHandler
         Read();
         if (!users.ContainsKey(u.Id))
         {
-            HandleStartCommandAsync(message);
+           await HandleStartCommandAsync(message);
         }
 
-        users[message.Chat.Id].PhoneNumber= message.Contact.PhoneNumber;
+        users[message.Chat.Id].PhoneNumber = message.Contact.PhoneNumber;
         Write();
 
         var user = users[message.Chat.Id];

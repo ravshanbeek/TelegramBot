@@ -23,7 +23,5 @@ public partial class UpdateHandler
         await client.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: "Amaliyot muvofaqqiyatli tugatildi");
-
-        return;
     }
 }

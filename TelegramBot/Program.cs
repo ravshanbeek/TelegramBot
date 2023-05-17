@@ -42,6 +42,7 @@ namespace TelegramBot
 
             app.Run();
         }
+
         private static void SetWebHook(
                 IApplicationBuilder builder,
                 IConfiguration configuration)

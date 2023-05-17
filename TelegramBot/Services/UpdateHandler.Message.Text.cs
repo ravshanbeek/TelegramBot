@@ -27,9 +27,13 @@ public partial class UpdateHandler
                 "SMM" => HandleSMMAsync(message),
                 "Grafik Dizayn" => HandleGraficDisign(message),
                 "MobilGrafiya" => HandleMobileGrafic(message),
+                "Logo" => HandleLogoAsync(message),
+                "Dizayn" => HandleDisignAsync(message),
+                "KopyWriting" => HandleCopyWriting(message),
                 "Asosiy Menyu" => BackToMain(message),
                 "Orqaga" => BackToMain(message),
                 "Admin" => AdminMenuAsync(message),
+
 
                 "Прайс лист" => CategoryOfPrice(message),
                 "Мобилография" => MobileGrafic(message),
@@ -55,6 +59,58 @@ public partial class UpdateHandler
                 chatId: message.From.Id,
                 text: "Failed to handle your request. Please try again");
         }
+    }
+
+    #region Generate Buttons 
+    private async Task HandleStartCommandAsync(Message message)
+    {
+        Read();
+        var user = message.From;
+        if (!users.ContainsKey(message.Chat.Id))
+        {
+            users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
+            Write();
+        }
+
+        var requestLanguage = new ReplyKeyboardMarkup(new[] {
+            new[] { new KeyboardButton("uz"),
+                    new KeyboardButton("ru")}
+        });
+
+        requestLanguage.ResizeKeyboard = true;
+        requestLanguage.OneTimeKeyboard = true;
+
+        await this.client.SendTextMessageAsync(
+                chatId: message.From.Id,
+                text: "Tilni tanlang\nВыберите язык",
+                replyMarkup: requestLanguage);
+    }
+
+    private async Task HandleLanguageCommandAsync(Message message)
+    {
+        var user = message.From ?? throw new ArgumentNullException(nameof(message));
+        Read();
+        if (!users.ContainsKey(user.Id))
+        {
+            users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
+        }
+        int lan = message.Text.Contains("uz") ? 1 : 2;
+        users[user.Id].Language = lan;
+
+        Write();
+
+        var requestContact = new ReplyKeyboardMarkup(new[] {
+            new[] { new KeyboardButton("Share contact") { RequestContact = true} }
+        });
+
+        requestContact.ResizeKeyboard = true;
+        requestContact.OneTimeKeyboard = true;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: lan == 1 ? "Iltimos raqamingizni biz bilan ulashing" :
+                "Пожалуйста, поделитесь с нами своим номером",
+            replyMarkup: requestContact);
     }
 
     private async Task AdminMenuAsync(Message message)
@@ -88,100 +144,6 @@ public partial class UpdateHandler
                 chatId: message.Chat.Id,
                 text: "Nimani o'zgartirmoqchisiz",
                 replyMarkup: inlineKeyboard);
-    }
-
-    private async Task BackToMain(Message message)
-    {
-        Read();
-        var user = users[message.From.Id];
-
-        await client.SendTextMessageAsync(
-            chatId: message.Chat.Id,
-            text: user.Language == 1 ? "Menyu" : "Меню",
-            replyMarkup: user.Language == 1 ? GenerateMainMenuUz() : GenerateMainMenuRu());
-    }
-
-    private Task HandleMobileGrafic(Message message)
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task HandleGraficDisign(Message message)
-    {
-        Read();
-        var user = users[message.Chat.Id];
-
-        var requestGraficDisignuz = new ReplyKeyboardMarkup(new[] {
-            new[]
-            {
-                new KeyboardButton("Logo"),
-                new KeyboardButton("Dizayn")},
-            new[]
-            {
-                new KeyboardButton("Asosiy Menyu")
-            }
-        });
-        requestGraficDisignuz.ResizeKeyboard = true;
-
-        var requestGraficDisignru = new ReplyKeyboardMarkup(new[] {
-            new[]
-            {
-                new KeyboardButton("Логотип"),
-                new KeyboardButton("Дизайн")},
-            new[]
-            {
-                new KeyboardButton("Главное меню")
-            }
-        });
-        requestGraficDisignru.ResizeKeyboard = true;
-
-        await this.client.SendTextMessageAsync(
-            chatId: message.Chat.Id,
-            text: user.Language == 1 ? "Xizmatlarimiz" : "Наши сервисы",
-            replyMarkup: user.Language == 1 ? requestGraficDisignuz : requestGraficDisignru);
-
-    }
-
-    private Task HandleSMMAsync(Message message)
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task CopyWriting(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-
-        await client.SendTextMessageAsync(
-            chatId: user.Id,
-            text: resource.CopyWriting);
-    }
-
-    private async Task MontageVideo(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-        var file = new InputOnlineFile(resource.VideoMontage);
-
-        await client.SendVideoAsync(user.Id, file);
-    }
-
-    private async Task GraphicDisign(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-        var file = new InputOnlineFile(resource.GraficDisign);
-
-        await client.SendPhotoAsync(user.Id, file);
-    }
-
-    private async Task MobileGrafic(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-        var file = new InputOnlineFile(resource.MobileGrafic);
-
-        await client.SendVideoAsync(user.Id, file);
     }
 
     private async Task HandleOrderAsync(Message message)
@@ -221,73 +183,51 @@ public partial class UpdateHandler
             replyMarkup: user.Language == 1 ? requestOrderuz : requestOrderru);
     }
 
-    private async Task HandleContactWithAdminAsync(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-        await client.SendTextMessageAsync(
-            chatId: user.Id,
-            text: resource.ContactWithAdmin);
-    }
-
-    private async Task CategoryOfPrice(Message message)
-    {
-        var user = message.From;
-        ReadResource();
-        var doc = new InputOnlineFile(resource.Category);
-
-        await client.SendDocumentAsync(user.Id, doc);
-    }
-
-    private async Task HandleLanguageCommandAsync(Message message)
-    {
-        var user = message.From;
-        Read();
-        if (!users.ContainsKey(user.Id))
-        {
-            users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
-        }
-        int lan = message.Text.Contains("uz") ? 1 : 2;
-        users[user.Id].Language = lan;
-
-        Write();
-
-        var requestContact = new ReplyKeyboardMarkup(new[] {
-            new[] { new KeyboardButton("Share contact") { RequestContact = true} }
-        });
-
-        requestContact.ResizeKeyboard = true;
-        requestContact.OneTimeKeyboard = true;
-
-        await client.SendTextMessageAsync(
-            chatId: user.Id,
-            text: lan == 1 ? "Iltimos raqamingizni biz bilan ulashing" :
-                "Пожалуйста, поделитесь с нами своим номером",
-            replyMarkup: requestContact);
-    }
-    private async Task HandleStartCommandAsync
-        (Message message)
+    private async Task HandleGraficDisign(Message message)
     {
         Read();
-        var user = message.From;
-        if (!users.ContainsKey(message.Chat.Id))
-        {
-            users.Add(user.Id, new User(user.Id, user.Username, user.FirstName, user.LastName));
-            Write();
-        }
+        var user = users[message.Chat.Id];
 
-        var requestLanguage = new ReplyKeyboardMarkup(new[] {
-            new[] { new KeyboardButton("uz"),
-                    new KeyboardButton("ru")}
+        var requestGraficDisignuz = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("Logo"),
+                new KeyboardButton("Dizayn")},
+            new[]
+            {
+                new KeyboardButton("Asosiy Menyu")
+            }
         });
+        requestGraficDisignuz.ResizeKeyboard = true;
 
-        requestLanguage.ResizeKeyboard = true;
-        requestLanguage.OneTimeKeyboard = true;
+        var requestGraficDisignru = new ReplyKeyboardMarkup(new[] {
+            new[]
+            {
+                new KeyboardButton("Логотип"),
+                new KeyboardButton("Дизайн")},
+            new[]
+            {
+                new KeyboardButton("Главное меню")
+            }
+        });
+        requestGraficDisignru.ResizeKeyboard = true;
 
         await this.client.SendTextMessageAsync(
-                chatId: message.From.Id,
-                text: "Tilni tanlang\nВыберите язык",
-                replyMarkup: requestLanguage);
+            chatId: message.Chat.Id,
+            text: user.Language == 1 ? "Xizmatlarimiz" : "Наши сервисы",
+            replyMarkup: user.Language == 1 ? requestGraficDisignuz : requestGraficDisignru);
+
+    }
+
+    private async Task BackToMain(Message message)
+    {
+        Read();
+        var user = users[message.From.Id];
+
+        await client.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: user.Language == 1 ? "Menyu" : "Меню",
+            replyMarkup: user.Language == 1 ? GenerateMainMenuUz() : GenerateMainMenuRu());
     }
 
     private ReplyKeyboardMarkup GenerateMainMenuUz()
@@ -351,10 +291,142 @@ public partial class UpdateHandler
         return buttons;
     }
 
-    private string MapLink(double latitude, double longitude)
-    {
-        string link = $"https://maps.google.com/maps?q={longitude},{latitude}&ll={longitude},{latitude}&z=16";
+    #endregion
 
-        return link;
+    #region Send Informations Medias
+
+    private async Task CopyWriting(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: resource.CopyWriting);
     }
+
+    private async Task CategoryOfPrice(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+        var doc = new InputOnlineFile(resource.Category);
+
+        await client.SendDocumentAsync(user.Id, doc);
+    }
+
+    private async Task MontageVideo(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+        var file = new InputOnlineFile(resource.VideoMontage);
+
+        await client.SendVideoAsync(user.Id, file);
+    }
+
+    private async Task GraphicDisign(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+        var file = new InputOnlineFile(resource.GraficDisign);
+
+        await client.SendPhotoAsync(user.Id, file);
+    }
+
+    private async Task MobileGrafic(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+        var file = new InputOnlineFile(resource.MobileGrafic);
+
+        await client.SendVideoAsync(user.Id, file);
+    }
+
+    private async Task HandleContactWithAdminAsync(Message message)
+    {
+        var user = message.From;
+        ReadResource();
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: resource.ContactWithAdmin);
+    }
+
+    #endregion
+
+    #region Handle Orders
+    private async Task HandleCopyWriting(Message message)
+    {
+        var user = message.From;
+        Read();
+
+        users[user.Id].Order.Service = "CopyWriting";
+        users[user.Id].Order.Status = 1;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
+            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+        Write();
+    }
+
+    private async Task HandleDisignAsync(Message message)
+    {
+        var user = message.From;
+        Read();
+
+        users[user.Id].Order.Service = "Disign";
+        users[user.Id].Order.Status = 1;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
+            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+        Write();
+    }
+
+    private async Task HandleLogoAsync(Message message)
+    {
+        var user = message.From;
+        Read();
+
+        users[user.Id].Order.Service = "Logo";
+        users[user.Id].Order.Status = 1;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
+            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+        Write();
+    }
+
+    private async Task HandleSMMAsync(Message message)
+    {
+        var user = message.From;
+        Read();
+
+        users[user.Id].Order.Service = "SMM";
+        users[user.Id].Order.Status = 1;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
+            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+        Write();
+    }
+
+    private async Task HandleMobileGrafic(Message message)
+    {
+        var user = message.From;
+        Read();
+
+        users[user.Id].Order.Service = "MobilGrafiya";
+        users[user.Id].Order.Status = 1;
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
+            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+        Write();
+    }
+
+    #endregion
 }
