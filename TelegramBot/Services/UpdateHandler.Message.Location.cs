@@ -9,6 +9,7 @@ public partial class UpdateHandler
     private async Task HandleMessageLocationAsync(Message message)
     {
         Read();
+        ReadResource();
         var location = message.Location;
 
         var user = users[message.From.Id];
@@ -31,10 +32,14 @@ public partial class UpdateHandler
             user.Address.AddressData = String.Join(",\n", addressDatas);
         }
 
-        Write();
-
         if (user.Order.Status != 3)
             return;
+        user.Order.Status = 4;
+
+        await client.SendLocationAsync(
+            resource.Admin.Id,
+            (double)user.Address.Latitude,
+            (double)user.Address.Longitude);
 
         await client.SendTextMessageAsync(
                 chatId: resource.Admin.Id,
@@ -42,22 +47,23 @@ public partial class UpdateHandler
                     $"\t@{user.UserName} {user.PhoneNumber} sizga buyurtma berdi\n" +
                     $"Xizmat: {user.Order.Service}\n" +
                     $"Instagram: {user.Order.InstagramUrl}\n" +
-                    $"TZ: {user.Order.Text} \n" +
-                    $"address link: " +
-                    $"https://maps.google.com/maps?q={user.Address.Latitude},{user.Address.Longitude}&ll={user.Address.Latitude},{user.Address.Longitude}&z=16",
+                    $"TZ: {user.Order.Text} \n",
                 replyMarkup: new InlineKeyboardMarkup(new[]
                 {
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Ha", $"Ha {user.Id}"),
-                        InlineKeyboardButton.WithCallbackData("Yo'q", $"Yo'q {user.Id}")
+                        InlineKeyboardButton.WithCallbackData("Ha", $"Yes {user.Id}"),
+                        InlineKeyboardButton.WithCallbackData("Yo'q", $"No {user.Id}")
                     }
                 }));
+
+
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
             text: user.Language == 1 ? "Buyurtmangiz adminga yuborildi tez orada sizga murojat qilishadi"
             : "Ваш заказ отправлен администратору, они свяжутся с вами в ближайшее время");
+        Write();
     }
 }
 
