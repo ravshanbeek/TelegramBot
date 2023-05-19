@@ -75,28 +75,19 @@ public partial class UpdateHandler
         {
             users[user.Id].Order.Text = message.Text;
             users[user.Id].Order.Status = 3;
+            
+            var requestLocation = new ReplyKeyboardMarkup(
+            new[] { new KeyboardButton("Share contact") { RequestLocation = true}});
 
-
-            await client.SendTextMessageAsync(
-                chatId: resource.Admin.Id,
-                text: $"sizga {user.FirstName} {user.LastName}\n" +
-                    $"\t@{user.UserName} {user.PhoneNumber} sizga buyurtma berdi\n" +
-                    $"Xizmat: {user.Order.Service}\n" +
-                    $"Instagram: {user.Order.InstagramUrl}\n" +
-                    $"TZ: {user.Order.Text} \n",
-                replyMarkup: new InlineKeyboardMarkup(new[]
-                {
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("Ha", $"Ha {user.Id}"),
-                        InlineKeyboardButton.WithCallbackData("Yo'q", $"Yo'q {user.Id}")
-                    } 
-                }));
+            requestLocation.ResizeKeyboard = true;
+            requestLocation.OneTimeKeyboard = true;
 
             await client.SendTextMessageAsync(
                 chatId: user.Id,
-                text: user.Language == 1 ? "Buyurtmangiz adminga yuborildi tez orada sizga murojat qilishadi"
-                : "Ваш заказ отправлен администратору, они свяжутся с вами в ближайшее время");
+                text: user.Language == 1 ? "Iltimos Lokatsiya yuboring" :
+                "пожалуйста, пришлите мне ваше местоположение",
+                replyMarkup: requestLocation);
+
             Write();
             return;
         }

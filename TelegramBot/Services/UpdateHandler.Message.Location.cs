@@ -1,7 +1,6 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using Yandex.Geocoder;
 
 namespace TelegramBot.Services;
 
@@ -32,19 +31,33 @@ public partial class UpdateHandler
             user.Address.AddressData = String.Join(",\n", addressDatas);
         }
 
-        var re = new ReverseGeocoderRequest()
-        {
-            Latitude = location.Latitude,
-            Longitude = location.Longitude
-        };
-
         Write();
 
+        if (user.Order.Status != 3)
+            return;
+
         await client.SendTextMessageAsync(
-            chatId: message.From.Id,
-            text: "Ism familiyangizni quyidagi formatda yuboring.\n" +
-            "/register Palonchiyev Pistonchi",
-            replyMarkup: new ReplyKeyboardRemove());
+                chatId: resource.Admin.Id,
+                text: $"sizga {user.FirstName} {user.LastName}\n" +
+                    $"\t@{user.UserName} {user.PhoneNumber} sizga buyurtma berdi\n" +
+                    $"Xizmat: {user.Order.Service}\n" +
+                    $"Instagram: {user.Order.InstagramUrl}\n" +
+                    $"TZ: {user.Order.Text} \n" +
+                    $"address link: " +
+                    $"https://maps.google.com/maps?q={user.Address.Latitude},{user.Address.Longitude}&ll={user.Address.Latitude},{user.Address.Longitude}&z=16",
+                replyMarkup: new InlineKeyboardMarkup(new[]
+                {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Ha", $"Ha {user.Id}"),
+                        InlineKeyboardButton.WithCallbackData("Yo'q", $"Yo'q {user.Id}")
+                    }
+                }));
+
+        await client.SendTextMessageAsync(
+            chatId: user.Id,
+            text: user.Language == 1 ? "Buyurtmangiz adminga yuborildi tez orada sizga murojat qilishadi"
+            : "Ваш заказ отправлен администратору, они свяжутся с вами в ближайшее время");
     }
 }
 

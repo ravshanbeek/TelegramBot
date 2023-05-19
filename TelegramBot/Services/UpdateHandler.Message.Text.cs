@@ -106,8 +106,8 @@ public partial class UpdateHandler
 
         Write();
 
-        var requestContact = new ReplyKeyboardMarkup(new[] {
-            new[] { new KeyboardButton("Share contact") { RequestContact = true} }
+        var requestContact = new ReplyKeyboardMarkup(
+            new[] { new KeyboardButton("Share contact") { RequestContact = true} 
         });
 
         requestContact.ResizeKeyboard = true;
