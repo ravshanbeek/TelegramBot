@@ -1,6 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -9,7 +10,7 @@ namespace TelegramBot.Services;
 public partial class UpdateHandler
 {
     private readonly ITelegramBotClient client;
-    private Dictionary<long,User> users = new Dictionary<long, User>();
+    private Dictionary<long, User> users = new Dictionary<long, User>();
     private readonly string db = @"C:\Users\Ravshan\Desktop\Projects\TelegramBot\TelegramBot\Models\basa.txt";
     private readonly string resourceDb = @"C:\Users\Ravshan\Desktop\Projects\TelegramBot\TelegramBot\Models\Resource.txt";
     private Resource resource = new Resource();
@@ -23,8 +24,8 @@ public partial class UpdateHandler
     {
         switch (update.Type)
         {
-            case UpdateType.CallbackQuery:await HandleCallBackQuery(update); break;
-            case UpdateType.Message:await HandleMessage(update.Message); break;
+            case UpdateType.CallbackQuery: await HandleCallBackQuery(update); break;
+            case UpdateType.Message: await HandleMessage(update.Message); break;
         }
     }
     private async Task HandleNotAvailableCommandAsync(Message message)
@@ -36,14 +37,14 @@ public partial class UpdateHandler
         ReadResource();
         var u = message.From ?? throw new ArgumentNullException(nameof(message));
 
-        /*if (resource.Admin.Id == u.Id)
+        if (resource.Admin.Id == u.Id)
         {
             switch (resource.DataName)
             {
                 case "Admin": resource.ContactWithAdmin = message.Text; break;
                 case "Kopywriting": resource.CopyWriting = message.Text; break;
             }
-        
+
             resource.DataName = null;
 
             WriteResource();
@@ -52,23 +53,20 @@ public partial class UpdateHandler
                 chatId: u.Id,
                 text: "Amaliyot muvofaqqiyatli tugatildi");
             return;
-        }*/
+        }
 
         var user = users[u.Id];
 
         if (users[u.Id].Order?.Status == 1)
         {
-            var loginPassword = message.Text.Split('*').ToArray();
-
-            users[user.Id].Order.InstagramUrl = loginPassword[0];
-            users[user.Id].Order.InstagramParol = loginPassword[1];
+            users[user.Id].Order.InstagramUrl = message.Text;
             users[user.Id].Order.Status = 2;
 
             Write();
 
             await client.SendTextMessageAsync(
                 chatId: user.Id,
-                text: users[u.Id].Language == 1 ? "TZ ni yuboring" : "send me TZ");
+                text: users[u.Id].Language == 1 ? "TZ ni yuboring" : "Отправить ТЗ");
 
             return;
         }
@@ -76,21 +74,31 @@ public partial class UpdateHandler
         if (users[user.Id].Order.Status == 2)
         {
             users[user.Id].Order.Text = message.Text;
+            users[user.Id].Order.Status = 3;
 
-            var servise = users[user.Id].Order.Service;
-            var sender = servise == "SMM" ? resource.Admin :
-                servise == "CopyWriting" ? resource.CoypWriter :
-                servise == "Disign" || servise == "Logo" ? resource.Disigner :
-                servise == "MobilGrafiya" ? resource.MobiloGrafer : null;
 
             await client.SendTextMessageAsync(
-                chatId: sender.Id,
-                text: $"sizga {user.LastName} {user.LastName}" + 
-                    $"{user.UserName} {user.PhoneNumber} sizga buyurtma berdi" + 
-                    $"Xizmat: {user.Order.Service}" +
-                    $"Instagram: {user.Order.InstagramUrl}" + 
-                    $"Parol: {user.Order.InstagramParol}" +
-                    $"TZ: {user.Order.Text}");
+                chatId: resource.Admin.Id,
+                text: $"sizga {user.FirstName} {user.LastName}\n" +
+                    $"\t@{user.UserName} {user.PhoneNumber} sizga buyurtma berdi\n" +
+                    $"Xizmat: {user.Order.Service}\n" +
+                    $"Instagram: {user.Order.InstagramUrl}\n" +
+                    $"TZ: {user.Order.Text} \n",
+                replyMarkup: new InlineKeyboardMarkup(new[]
+                {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Ha", $"Ha {user.Id}"),
+                        InlineKeyboardButton.WithCallbackData("Yo'q", $"Yo'q {user.Id}")
+                    } 
+                }));
+
+            await client.SendTextMessageAsync(
+                chatId: user.Id,
+                text: user.Language == 1 ? "Buyurtmangiz adminga yuborildi tez orada sizga murojat qilishadi"
+                : "Ваш заказ отправлен администратору, они свяжутся с вами в ближайшее время");
+            Write();
+            return;
         }
 
         await this.client.SendTextMessageAsync(

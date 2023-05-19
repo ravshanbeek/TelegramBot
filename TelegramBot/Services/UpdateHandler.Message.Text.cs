@@ -24,17 +24,6 @@ public partial class UpdateHandler
                 "Kopywriting" => CopyWriting(message),
                 "Admin bilan aloqa" => HandleContactWithAdminAsync(message),
                 "Zakaz berish" => HandleOrderAsync(message),
-                "SMM" => HandleSMMAsync(message),
-                "Grafik Dizayn" => HandleGraficDisign(message),
-                "MobilGrafiya" => HandleMobileGrafic(message),
-                "Logo" => HandleLogoAsync(message),
-                "Dizayn" => HandleDisignAsync(message),
-                "KopyWriting" => HandleCopyWriting(message),
-                "Asosiy Menyu" => BackToMain(message),
-                "Orqaga" => BackToMain(message),
-                "Admin" => AdminMenuAsync(message),
-
-
                 "Прайс лист" => CategoryOfPrice(message),
                 "Мобилография" => MobileGrafic(message),
                 "Графический дизайнер" => GraphicDisign(message),
@@ -42,11 +31,29 @@ public partial class UpdateHandler
                 "Копирайтинг" => CopyWriting(message),
                 "Для связи с нами" => HandleContactWithAdminAsync(message),
                 "Заказать" => HandleOrderAsync(message),
+
+
+                "SMM" => HandleSMMAsync(message),
                 "СММ" => HandleSMMAsync(message),
-                "МобилоГрафия" => HandleMobileGrafic(message),
+                "Grafik Dizayn" => HandleGraficDisign(message),
                 "Графический Дизайнер" => HandleGraficDisign(message),
+                "MobilGrafiya" => HandleMobileGrafic(message),
+                "МобилоГрафия" => HandleMobileGrafic(message),
+                "Logo" => HandleLogoAsync(message),
+                "Логотип" => HandleLogoAsync(message),
+                "Dizayn" => HandleDisignAsync(message),
+                "Дизайн" => HandleDisignAsync(message),
+                "KopyWriting" => HandleCopyWriting(message),
+                "Kопирайтинг" => HandleCopyWriting(message),
+
+
+                "Asosiy Menyu" => BackToMain(message),
                 "Главное меню" => BackToMain(message),
+                "Orqaga" => BackToMain(message),
                 "Назад" => BackToMain(message),
+
+                "Admin" => AdminMenuAsync(message),
+
 
                 _ => HandleNotAvailableCommandAsync(message)
             };
@@ -154,20 +161,31 @@ public partial class UpdateHandler
         var requestOrderuz = new ReplyKeyboardMarkup(new[] {
             new[]
             {
-                new KeyboardButton("SMM"),
+                new KeyboardButton("SMM")
+
+            },
+            new[]
+            {
+                new KeyboardButton("KopyWriting"),
                 new KeyboardButton("Grafik Dizayn"),
-                new KeyboardButton("MobilGrafiya")},
+                new KeyboardButton("MobilGrafiya")
+            },
             new[]
             {
                 new KeyboardButton("Orqaga")
             }
         });
         requestOrderuz.ResizeKeyboard = true;
+        requestOrderuz.OneTimeKeyboard = true;
 
         var requestOrderru = new ReplyKeyboardMarkup(new[] {
             new[]
             {
-                new KeyboardButton("СММ"),
+                new KeyboardButton("СММ")
+            },
+            new[]
+            {
+                new KeyboardButton("Kопирайтинг"),
                 new KeyboardButton("Графический Дизайнер"),
                 new KeyboardButton("МобилоГрафия")},
             new[]
@@ -176,6 +194,7 @@ public partial class UpdateHandler
             }
         });
         requestOrderru.ResizeKeyboard = true;
+        requestOrderru.OneTimeKeyboard = true;
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
@@ -360,12 +379,12 @@ public partial class UpdateHandler
 
         users[user.Id].Order.Service = "CopyWriting";
         users[user.Id].Order.Status = 1;
+        Write();
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
-            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
-        Write();
+            text: users[user.Id].Language == 1 ? "Instagram ssilkangizni yuboring" :
+            "Отправьте ссылку на ваш инстаграм");
     }
 
     private async Task HandleDisignAsync(Message message)
@@ -378,8 +397,8 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
-            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+            text: users[user.Id].Language == 1 ? "Instagram ssilkangizni yuboring" :
+             "Отправьте ссылку на ваш инстаграм");
         Write();
     }
 
@@ -393,8 +412,8 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
-            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+            text: users[user.Id].Language == 1 ? "Instagram ssilkangizni yuboring" :
+            "Отправьте ссылку на ваш инстаграм");
         Write();
     }
 
@@ -408,8 +427,8 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
-            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+            text: users[user.Id].Language == 1 ? "Instagram ssilkangizni yuboring" :
+            "Отправьте ссылку на ваш инстаграм");
         Write();
     }
 
@@ -423,8 +442,8 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: users[user.Id].Language == 1 ? "instagram Accauntingizni kiriting(Login:Parol)\nmassalan instagram123*parol123" :
-            "Введите свой аккаунт в инстаграме (Логин: Пароль)\nнапример, instagram123*password123");
+            text: users[user.Id].Language == 1 ? "Instagram ssilkangizni yuboring" 
+            : "Отправьте ссылку на ваш инстаграм");
         Write();
     }
 

@@ -3,9 +3,6 @@
 public class Resource
 {
     public User Admin { get; set; }
-    public User? CoypWriter { get; set; }
-    public User? MobiloGrafer { get; set; }
-    public User? Disigner { get; set; }
     public string? ContactWithAdmin { get; set; }
     public string? Category { get; set; }
     public string? MobileGrafic { get; set; }
@@ -23,10 +20,7 @@ public class Resource
         string? graficDisign = null,
         string? vedioMontage = null,
         string? dataName = null,
-        string? copyWriting = null,
-        User? coypWriter = null,
-        User? mobiloGrafer = null,
-        User? disigner = null)
+        string? copyWriting = null)
     {
         Admin = admin;
         Category = category;
@@ -36,8 +30,5 @@ public class Resource
         GraficDisign = graficDisign;
         VideoMontage = vedioMontage;
         ContactWithAdmin = contactWithAdmin;
-        CoypWriter = coypWriter;
-        MobiloGrafer = mobiloGrafer;
-        Disigner = disigner;
     }
 }

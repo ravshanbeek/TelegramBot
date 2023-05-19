@@ -10,6 +10,7 @@
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	  <PackageReference Include="Telegram.Bot" Version="18.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
+	  <PackageReference Include="Yandex.Geocoder.v2" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

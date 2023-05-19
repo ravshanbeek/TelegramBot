@@ -14,6 +14,8 @@ public partial class UpdateHandler
             MessageType.Video => HandleMessageVideoAsync(message),
             MessageType.Document => HandleMessageDocumentAsync(message),
             MessageType.Photo => HandleMessagePhotoAsync(message),
+            MessageType.Location => HandleMessageLocationAsync(message),
+
             _ => HandleNotAvailableCommandAsync(message)
         };
 

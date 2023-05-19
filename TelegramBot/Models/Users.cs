@@ -9,6 +9,8 @@ public class User
     public string? PhoneNumber { get; set; }
     public string? ActualPhoneNumber { get; set; }
     public Order Order { get; set; }
+    public long? AddressId { get; set; }
+    public Address? Address { get; set; }
     public int Language { get; set; }
 
     public User(long id,
@@ -18,7 +20,9 @@ public class User
         int language = 0,
         string? phoneNumber = null,
         string? actualPhoneNumber = null,
-        Order? order = null)
+        Order? order = null,
+        Address? address = null,
+        long? addressId = null)
     {
         Id = id;
         UserName = userName;
@@ -28,6 +32,8 @@ public class User
         ActualPhoneNumber = actualPhoneNumber;
         Language = language;
         Order = order ?? new Order();
+        Address = address;
+        AddressId = addressId;
     }
 
 }
