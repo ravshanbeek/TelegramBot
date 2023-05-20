@@ -22,7 +22,7 @@ public partial class UpdateHandler
     private async Task RequestAccepted(Update update, string chatId)
     {
         Read();
-
+        ReadResource();
         var user = users[long.Parse(chatId)];
 
         await client.SendTextMessageAsync(
@@ -40,12 +40,17 @@ public partial class UpdateHandler
                 : "Укажите удобный для вас день фотосессии");
         }
 
+        await client.SendTextMessageAsync(
+            chatId: resource.Admin.Id,
+            text: "Malumot mijozga yetkazildi");
+
         Write();
     }
 
     private async Task RequestNotAccepted(Update update, string chatId)
     {
         Read();
+        ReadResource();
 
         var user = users[long.Parse(chatId)];
 
@@ -55,6 +60,10 @@ public partial class UpdateHandler
             : "Ваш запрос не одобрен администратором");
 
         user.Order = null;
+
+        await client.SendTextMessageAsync(
+            chatId: resource.Admin.Id,
+            text: "Malumot mijozga yetkazildi");
 
         Write();
     }
