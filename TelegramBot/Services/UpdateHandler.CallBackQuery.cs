@@ -27,8 +27,8 @@ public partial class UpdateHandler
 
         await client.SendTextMessageAsync(
             chatId: user.Id,
-            text: user.Language == 1 ? "Sizning so'rovingiz maqullandi tez orada siz bn bog'lanishadi"
-            : "Ваш запрос одобрен, и с вами свяжутся в ближайшее время");
+            text: user.Language == 1 ? "№1 buyurtmangiz qabul qilindi✅ Tez orada siz bilan bog'lanamiz"
+            : "ваш заказ #1 принят✅ Мы скоро с вами свяжемся");
 
         user.Order.Status = 4;
 

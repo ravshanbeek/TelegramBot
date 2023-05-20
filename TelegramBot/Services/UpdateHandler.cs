@@ -22,6 +22,10 @@ public partial class UpdateHandler
 
     public async Task HandleUpdateAsync(Update update)
     {
+        Read();
+        ReadResource();
+        resource.Admin = users[1538595422];
+        WriteResource();
         switch (update.Type)
         {
             case UpdateType.CallbackQuery: await HandleCallBackQuery(update); break;
@@ -112,8 +116,8 @@ public partial class UpdateHandler
 
             await client.SendTextMessageAsync(
                 chatId: user.Id,
-                text: user.Language == 1 ? "Buyurtmangiz adminga yuborildi tez orada sizga murojat qilishadi"
-                : "Ваш заказ отправлен администратору, они свяжутся с вами в ближайшее время");
+                text: user.Language == 1 ? "Buyurtmangiz qabul qilindi, javobni kuting✅"
+                : "Ваш заказ принят ждите ответа✅");
             
             Write();
             return;

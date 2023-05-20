@@ -21,10 +21,11 @@ public partial class UpdateHandler
                 "Mobilografiya" => MobileGrafic(message),
                 "Grafik dizayn" => GraphicDisign(message),
                 "Video Montaj" => MontageVideo(message),
-                "Kopywriting" => CopyWriting(message),
+                "Kopirayter" => CopyWriting(message),
                 "Admin bilan aloqa" => HandleContactWithAdminAsync(message),
                 "Zakaz berish" => HandleOrderAsync(message),
                 "Прайс лист" => CategoryOfPrice(message),
+                "Prays list" => CategoryOfPrice(message),
                 "Мобилография" => MobileGrafic(message),
                 "Графический дизайнер" => GraphicDisign(message),
                 "Видео монтаж" => MontageVideo(message),
@@ -43,7 +44,7 @@ public partial class UpdateHandler
                 "Логотип" => HandleLogoAsync(message),
                 "Dizayn" => HandleDisignAsync(message),
                 "Дизайн" => HandleDisignAsync(message),
-                "KopyWriting" => HandleCopyWriting(message),
+                "Kopywriting" => HandleCopyWriting(message),
                 "Kопирайтинг" => HandleCopyWriting(message),
 
 
@@ -260,7 +261,7 @@ public partial class UpdateHandler
 
             new[]
             {
-                new KeyboardButton("Прайс лист")
+                new KeyboardButton("Prays list")
             },
             new[]
             {
@@ -274,7 +275,7 @@ public partial class UpdateHandler
 
             new[]
             {
-                new KeyboardButton("Kopywriting"),
+                new KeyboardButton("Kopirayter"),
             }
         });
 
